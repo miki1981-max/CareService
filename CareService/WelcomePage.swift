@@ -19,7 +19,7 @@ struct WelcomePage: View {
     var body: some View {
            
                ZStack {
-                   Color("Background").ignoresSafeArea()
+                   Color("background").ignoresSafeArea()
                    
                    VStack(spacing: 40) {
                        ZStack {

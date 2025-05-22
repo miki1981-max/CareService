@@ -1,15 +1,14 @@
 //
-//  Frame26.swift
-//  CareService
+//  //
+//  Frame26View.swift
+//  You and me project
 //
-//  Created by Kamila Ponomarova on 2025-05-22.
+//  Created by Kaukab Farrukh on 2025-02-05.
 //
-
-
 
 import SwiftUI
 
-struct Frame25View: View {
+struct Frame26View: View {
     @State private var selectedCategory: String?
 
     var body: some View {
@@ -29,25 +28,25 @@ struct Frame25View: View {
                 Spacer(minLength: 50)
 
                 NavigationLink(
-                    destination: LinksListView2(category: "Intimate Hygiene", links: intimatehygieneLinks),
-                    tag: "Intimate Hygiene",
+                    destination: LinksListView3(category: "Nutrition", links: nutritionLinks),
+                    tag: "Nutrition",
                     selection: $selectedCategory
                 ) {
-                    Button("Intimate Hygiene") {
-                        selectedCategory = "Intimate Hygiene"
+                    Button("Nutrition") {
+                        selectedCategory = "Nutrition"
                     }
-                    .buttonStyle(Frame25ButtonStyle())
+                    .buttonStyle(Frame26ButtonStyle())
                 }
 
                 NavigationLink(
-                    destination: LinksListView2(category: "Taking Medications", links: takingmedicationsLinks),
-                    tag: "Taking Medications",
+                    destination: LinksListView3(category: "Benefits of Walking", links: benefitsofwalkingLinks),
+                    tag: "Benefits of Walking",
                     selection: $selectedCategory
                 ) {
-                    Button("Taking Medications") {
-                        selectedCategory = "Taking Medications"
+                    Button("Benefits of Walking") {
+                        selectedCategory = "Benefits of Walking"
                     }
-                    .buttonStyle(Frame25ButtonStyle())
+                    .buttonStyle(Frame26ButtonStyle())
                 }
 
                 Spacer()
@@ -59,23 +58,23 @@ struct Frame25View: View {
     }
 
     
-    private var intimatehygieneLinks: [String] {
+    private var nutritionLinks: [String] {
         [
-            "https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://lab-seid.com/six-tips-keep-hygiene-intimate-prevent-infections/%3Flang%3Den&ved=2ahUKEwjB1-LK67eLAxVCFRAIHdzRJGUQFnoECDQQAQ&usg=AOvVaw2yipv3ZrOyxLxVshlVf3zR",
-            "https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.cumlaudelab.com/en/how-to-choose-the-best-intimate-hygiene-product/&ved=2ahUKEwjB1-LK67eLAxVCFRAIHdzRJGUQFnoECC4QAQ&usg=AOvVaw0wqjmWuDgIGd_BnATJTxB8"
+            "https://www.nia.nih.gov/health/healthy-eating-nutrition-and-diet/healthy-meal-planning-tips-older-adults",
+            "https://www.nia.nih.gov/health/healthy-eating-nutrition-and-diet/how-read-food-and-beverage-labels"
         ]
     }
 
     
-    private var takingmedicationsLinks: [String] {
+    private var benefitsofwalkingLinks: [String] {
         [
-            "https://www.nia.nih.gov/health/medicines-and-medication-management/taking-medicines-safely-you-age",
-            "https://www.nia.nih.gov/news/dangers-polypharmacy-and-case-deprescribing-older-adults"
+            "https://www.nia.nih.gov/health/exercise-and-physical-activity/real-life-benefits-exercise-and-physical-activity",
+            "https://www.nia.nih.gov/news/leisure-activities-may-improve-longevity-older-adults"
         ]
     }
 }
 
-struct Frame25ButtonStyle: ButtonStyle {
+struct Frame26ButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .foregroundColor(.white)
@@ -89,8 +88,8 @@ struct Frame25ButtonStyle: ButtonStyle {
     }
 }
 
-struct Frame25View_Previews: PreviewProvider {
+struct Frame26View_Previews: PreviewProvider {
     static var previews: some View {
-        Frame25View()
+        Frame26View()
     }
 }
