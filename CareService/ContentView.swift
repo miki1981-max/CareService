@@ -5,20 +5,47 @@
 //  Created by Kamila Ponomarova on 2025-05-22.
 //
 
+
+//
 import SwiftUI
 
-struct ContentView: View {
+import Firebase
+import FirebaseAuth
+
+struct ContentView:View
+{
+    
+    @State var isLoggedIn : Bool?
+    
     var body: some View {
+        
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+            if isLoggedIn == true {
+                RecommendationsView1()
+            }
+            if isLoggedIn == false {
+                StartPageView()
+            }
         }
-        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear() {
+            Auth.auth().addStateDidChangeListener { auth, user in
+                print("USER CHANGE")
+                
+                if Auth.auth().currentUser == nil {
+                    isLoggedIn = false
+                } else {
+                    isLoggedIn = true
+                }
+            }
+        }
     }
 }
 
 #Preview {
     ContentView()
 }
+
+
+    
+
