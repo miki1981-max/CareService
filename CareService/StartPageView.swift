@@ -15,7 +15,7 @@ struct StartPageView: View {
         NavigationView {
             VStack {
                 ZStack {
-                    Color("Background").ignoresSafeArea()
+                    Color("background").ignoresSafeArea()
                     
                     VStack(spacing: 30) {
                         ZStack {

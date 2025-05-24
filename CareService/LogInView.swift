@@ -109,6 +109,7 @@ struct LoginView: View {
                         .hidden()
                 }
                 .padding(.top, 50)
+                .background(Color.background)
             }
         }
     }
