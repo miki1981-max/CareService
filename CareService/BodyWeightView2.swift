@@ -10,76 +10,90 @@
 import SwiftUI
 
 struct BodyWeightView2: View {
-    var bodyweight: String // Get from Fillinginformation2
-    @State private var currentTime: String = "" // To hold real-time
-    @State private var notice: String = "" // Notice input
+    var bodyweight: String // From BodyWeightView1
+    @State private var currentTime: String = ""
+    @State private var notice: String = ""
     @State private var showConfirmation = false
+    @State private var navigateToNextScreen = false
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text("List of symptoms")
-                .font(.largeTitle)
-                .bold()
-                .padding(.top, 50)
+        NavigationStack {
+            GeometryReader { geometry in
+                ZStack {
+                    Color("background").ignoresSafeArea()
 
-            Text("Body weight is...")
-                .font(.title3)
-                .padding(.bottom, 10)
+                    VStack(spacing: 20) {
+                        Text("List of symptoms")
+                            .font(.largeTitle)
+                            .bold()
+                            .padding(.top, geometry.size.height * 0.1)
 
-            Text(bodyweight + " kg")
-                .font(.largeTitle)
-                .bold()
+                        Text("Body weight is...")
+                            .font(.title3)
 
-            HStack(spacing: 10) {
-                Text(currentTime)
-                    .font(.headline)
+                        Text("\(bodyweight) kg")
+                            .font(.largeTitle)
+                            .bold()
+
+                        HStack(spacing: 10) {
+                            Text(currentTime)
+                                .font(.headline)
+                                .padding()
+                                .frame(width: geometry.size.width * 0.3, height: 40)
+                                .background(Color.gray.opacity(0.2))
+                                .cornerRadius(8)
+
+                            Button("TODAY") {
+                                updateCurrentTime()
+                            }
+                            .foregroundColor(.white)
+                            .frame(width: geometry.size.width * 0.3, height: 40)
+                            .background(Color.blue)
+                            .cornerRadius(8)
+                        }
+
+                        TextField("Enter notice", text: $notice)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .frame(width: geometry.size.width * 0.6)
+
+                        Button("Save") {
+                            saveInformation()
+                            showConfirmation = true
+                        }
+                        .alert(isPresented: $showConfirmation) {
+                            Alert(
+                                title: Text("Saved"),
+                                message: Text("Your information has been saved."),
+                                dismissButton: .default(Text("OK"))
+                            )
+                        }
+                        .foregroundColor(.white)
+                        .frame(width: geometry.size.width * 0.4, height: 44)
+                        .background(Color.blue)
+                        .cornerRadius(8)
+                        .padding(.top, 10)
+
+                        Button("Next") {
+                            navigateToNextScreen = true
+                        }
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .background(Color.green)
+                        .cornerRadius(8)
+                        .padding(.horizontal)
+                        .navigationDestination(isPresented: $navigateToNextScreen) {
+                            Frame23View()
+                        }
+
+                        Spacer()
+                    }
                     .padding()
-                    .frame(minWidth: 100, idealWidth: 150, maxWidth: 200, maxHeight: 40)
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(8)
-
-                Button("TODAY") {
-                    // "Today" button action
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .frame(minWidth: 100, idealWidth: 150, maxWidth: 200, maxHeight: 40)
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(8)
             }
-            .padding(.vertical, 10)
-
-            TextField("Enter notice", text: $notice)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .frame(width: 250)
-
-            Button("Save") {
-                saveInformation()
-                showConfirmation = true
+            .onAppear {
+                updateCurrentTime()
             }
-            .alert(isPresented: $showConfirmation) {
-                Alert(title: Text("Saved"), message: Text("Your information has been saved."), dismissButton: .default(Text("OK")))
-            }
-            .foregroundColor(.white)
-            .frame(width: 150, height: 44)
-            .background(Color.blue)
-            .cornerRadius(8)
-            .padding(.top, 20)
-
-            NavigationLink(destination: Frame23View()) {
-                Text("Next")
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity, maxHeight: 44)
-                    .background(Color.green)
-                    .cornerRadius(8)
-            }
-            .padding(.bottom, 20)
-        }
-        .padding(.horizontal, 20)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color("Background"))
-        .ignoresSafeArea()
-        .onAppear {
-            updateCurrentTime()
         }
     }
 
@@ -88,15 +102,15 @@ struct BodyWeightView2: View {
         dateFormatter.dateFormat = "HH:mm"
         currentTime = dateFormatter.string(from: Date())
     }
-    
+
     private func saveInformation() {
         UserDefaults.standard.set(bodyweight, forKey: "savedWeight")
-        UserDefaults.standard.set(notice, forKey: "savedNotice")
+        UserDefaults.standard.set(notice, forKey: "savedWeightNotice")
     }
 }
 
 struct BodyWeightView2_Previews: PreviewProvider {
     static var previews: some View {
-        BodyWeightView2(bodyweight: "57.0") // Pass example value for preview
+        BodyWeightView2(bodyweight: "57.0")
     }
 }

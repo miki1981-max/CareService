@@ -11,105 +11,104 @@
 import SwiftUI
 
 struct Frame20View: View {
-    var bodyTemperature: String // Directly taking a string now, not a binding
+    var bodyTemperature: String
     @State private var notice: String = ""
     @State private var showConfirmation = false
     @State private var currentTime: String = ""
-    @State private var measurementPlace: String = "Armpit" // Default measurement place
+    @State private var measurementPlace: String = "Armpit"
 
     var body: some View {
-        NavigationView {
-            VStack(spacing: 10) {
-                Text("List of symptoms")
-                    .font(.largeTitle)
-                    .bold()
-                    .padding(.top, 100)
+        GeometryReader { geometry in
+            ZStack {
+                Color("background").ignoresSafeArea()
 
-                VStack {
-                    Text("Your Body Temperature is")
+                VStack(spacing: 10) {
+                    Text("List of symptoms")
+                        .font(.largeTitle)
+                        .bold()
+                        .padding(.top, geometry.size.height * 0.1)
+
+                    VStack {
+                        Text("Your Body Temperature is")
+                            .font(.headline)
+                            .multilineTextAlignment(.center)
+
+                        Text(bodyTemperature)
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .foregroundColor(Color.black)
+                            .padding(.vertical, 2)
+
+                        Text("°C")
+                            .font(.subheadline)
+                    }
+                    .padding(.vertical, 10)
+
+                    HStack {
+                        Text(currentTime)
+                            .font(.headline)
+                            .padding()
+                            .frame(width: 120, height: 40)
+                            .background(Color.gray.opacity(0.2))
+                            .cornerRadius(8)
+
+                        Button("TODAY") {
+                            updateCurrentTime()
+                        }
+                        .foregroundColor(.white)
+                        .frame(width: 120, height: 40)
+                        .background(Color.blue)
+                        .cornerRadius(8)
+                    }
+                    .padding(.vertical, 10)
+
+                    Text("The place of body temperature measurement")
                         .font(.headline)
                         .multilineTextAlignment(.center)
+                        .padding(.vertical, 5)
 
-                    Text(bodyTemperature)
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(Color.black)
-                        .padding(.vertical, 2)
-
-                    Text("°C")
-                        .font(.subheadline)
-                }
-                .padding(.vertical, 10)
-
-                HStack {
-                    Text(currentTime)
-                        .font(.headline)
-                        .padding()
-                        .frame(width: 120, height: 40)
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(8)
-
-                    Button("TODAY") {
-                        updateCurrentTime()
-                    }
-                    .foregroundColor(.white)
-                    .frame(width: 120, height: 40)
-                    .background(Color.blue)
-                    .cornerRadius(8)
-                }
-                .padding(.vertical, 10)
-
-                Text("The place of body temperature measurement")
-                    .font(.headline)
-                    .multilineTextAlignment(.center)
-                    .padding(.vertical, 5)
-
-                HStack {
-                    ForEach(["Armpit", "Rectum", "Oral", "Ear Drum"], id: \.self) { place in
-                        Button(place) {
-                            measurementPlace = place
+                    HStack {
+                        ForEach(["Armpit", "Rectum", "Oral", "Ear Drum"], id: \.self) { place in
+                            Button(place) {
+                                measurementPlace = place
+                            }
+                            .frame(maxWidth: 140, maxHeight: 40)
+                            .padding()
+                            .background(measurementPlace == place ? Color.blue : Color.gray.opacity(0.2))
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
                         }
-                        .frame(maxWidth: 140, maxHeight: 40)
-                        .padding()
-                        .background(measurementPlace == place ? Color.blue : Color.gray.opacity(0.2))
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
                     }
-                }
-                .padding(.horizontal)
-
-                TextField("Enter notice", text: $notice)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding(.horizontal)
 
-                Button("Save") {
-                    saveInformation()
-                    showConfirmation = true
-                }
-                .alert(isPresented: $showConfirmation) {
-                    Alert(title: Text("Saved"), message: Text("Your information has been saved."), dismissButton: .default(Text("OK")))
-                }
-                .foregroundColor(.white)
-                .frame(width: 150, height: 44)
-                .background(Color.blue)
-                .cornerRadius(8)
-                .padding(.top, 20)
+                    TextField("Enter notice", text: $notice)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding(.horizontal)
 
-                NavigationLink(destination: Frame23View()) {
-                    Text("Next")
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity, maxHeight: 44)
-                        .background(Color.green)
-                        .cornerRadius(8)
+                    Button("Save") {
+                        saveInformation()
+                        showConfirmation = true
+                    }
+                    .alert(isPresented: $showConfirmation) {
+                        Alert(title: Text("Saved"), message: Text("Your information has been saved."), dismissButton: .default(Text("OK")))
+                    }
+                    .foregroundColor(.white)
+                    .frame(width: 150, height: 44)
+                    .background(Color.blue)
+                    .cornerRadius(8)
+                    .padding(.top, 20)
+
+                    NavigationLink(destination: Frame23View()) {
+                        Text("Next")
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity, maxHeight: 44)
+                            .background(Color.green)
+                            .cornerRadius(8)
+                    }
+                    .padding(.bottom, 20)
                 }
-                .padding(.bottom, 20)
-            }
-            .padding(.horizontal, 20)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color("Background"))
-            .ignoresSafeArea()
-            .onAppear {
-                updateCurrentTime()
+                .padding(.horizontal, 20)
+                .frame(width: geometry.size.width)
             }
         }
     }

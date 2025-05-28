@@ -13,25 +13,24 @@ struct BodyTemperatureView: View {
     @State private var navigateToNextScreen = false
 
     var body: some View {
-        NavigationView {
-            ZStack {
-                backgroundView
-                contentStack
-            }
-            .navigationBarHidden(true)
-        }
-    }
-    
-    private var backgroundView: some View {
-        Color("Background").ignoresSafeArea()
-    }
+        NavigationStack {
+            GeometryReader { geometry in
+                ZStack {
+                    Color("background")
+                        .ignoresSafeArea()
 
-    private var contentStack: some View {
-        VStack {
-            titleSection
-            inputSection
-            keypadSection
-            nextButton
+                    VStack {
+                        titleSection
+                        inputSection
+                        keypadSection
+                        nextButton(geometry: geometry)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+            }
+        }
+        .navigationDestination(isPresented: $navigateToNextScreen) {
+            Frame20View(bodyTemperature: temperature)
         }
     }
 
@@ -74,28 +73,26 @@ struct BodyTemperatureView: View {
             }
         }
     }
-    
-    private var nextButton: some View {
+
+    private func nextButton(geometry: GeometryProxy) -> some View {
         Button("Next") {
             navigateToNextScreen = true
         }
         .foregroundColor(.white)
-        .frame(maxWidth: 150, maxHeight: 44)
+        .frame(width: min(geometry.size.width * 0.4, 150), height: 44)
         .background(Color.blue)
         .cornerRadius(8)
         .padding(.top, 20)
-        .background(
-            NavigationLink(destination: Frame20View(bodyTemperature: temperature), isActive: $navigateToNextScreen) {
-                EmptyView()
-            }
-        )
     }
-    
+
     private func handleKeyPress(_ key: String) {
         switch key {
         case "⌫": temperature = String(temperature.dropLast())
         case "C": temperature = ""
-        default: if temperature.count < 5 && key != "⌫" && key != "C" { temperature.append(key) }
+        default:
+            if temperature.count < 5 && key != "⌫" && key != "C" {
+                temperature.append(key)
+            }
         }
     }
 }
@@ -120,4 +117,3 @@ struct BodyTemperatureView_Previews: PreviewProvider {
         BodyTemperatureView()
     }
 }
-

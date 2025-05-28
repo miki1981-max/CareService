@@ -12,28 +12,35 @@ import SwiftUI
 
 struct BodyWeightView1: View {
     @State private var weight = ""
-    @State private var navigateToNextScreen = false // State to control navigation
-    
-    var body: some View {
-        NavigationView {
-            ZStack {
-                backgroundView
-                contentStack
-            }
-            .navigationBarHidden(true) // Optionally hide the navigation bar
-        }
-    }
-    
-    private var backgroundView: some View {
-        Color("Background").ignoresSafeArea()
-    }
+    @State private var navigateToNextScreen = false
 
-    private var contentStack: some View {
-        VStack {
-            titleSection
-            inputSection
-            keypadSection
-            nextButton
+    var body: some View {
+        NavigationStack {
+            GeometryReader { geometry in
+                ZStack {
+                    Color("background").ignoresSafeArea()
+
+                    VStack {
+                        titleSection
+                        inputSection
+                        keypadSection
+
+                        Button("Next") {
+                            navigateToNextScreen = true
+                        }
+                        .foregroundColor(.white)
+                        .frame(width: min(geometry.size.width * 0.4, 150), height: 44)
+                        .background(Color.blue)
+                        .cornerRadius(8)
+                        .padding(.top, 20)
+                        .navigationDestination(isPresented: $navigateToNextScreen) {
+                            BodyWeightView2(bodyweight: weight)
+                        }
+                    }
+                    .padding()
+                    .frame(maxWidth: geometry.size.width, maxHeight: geometry.size.height)
+                }
+            }
         }
     }
 
@@ -45,9 +52,10 @@ struct BodyWeightView1: View {
                 .font(.subheadline)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 30)
-        }.padding(.top, 20)
+        }
+        .padding(.top, 20)
     }
-    
+
     private var inputSection: some View {
         VStack {
             TextField("Enter the weight", text: $weight)
@@ -55,9 +63,10 @@ struct BodyWeightView1: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .frame(width: 150)
             Text("lbs/kg").font(.headline)
-        }.padding(.top, 20)
+        }
+        .padding(.top, 20)
     }
-    
+
     private var keypadSection: some View {
         VStack(spacing: 10) {
             keypadRow(keys: ["1", "2", "3"])
@@ -70,39 +79,28 @@ struct BodyWeightView1: View {
     private func keypadRow(keys: [String]) -> some View {
         HStack(spacing: 10) {
             ForEach(keys, id: \.self) { key in
-                KeyButton(key: key, action: {
+                KeyButton(key: key) {
                     handleKeyPress(key)
-                })
+                }
             }
         }
     }
-    
-    private var nextButton: some View {
-        Button("Next") {
-            navigateToNextScreen = true // Trigger navigation
-        }
-        .foregroundColor(.white)
-        .frame(maxWidth: 150, maxHeight: 44)
-        .background(Color.blue)
-        .cornerRadius(8)
-        .padding(.top, 20)
-        .background(
-            NavigationLink(destination: BodyWeightView2(bodyweight: weight), isActive: $navigateToNextScreen) {
-                EmptyView() // Invisible navigation link activated by the button
-            }
-        )
-    }
-    
+
     private func handleKeyPress(_ key: String) {
         switch key {
-        case "⌫": weight = String(weight.dropLast())
-        case "C": weight = ""
-        default: if weight.count < 5 && key != "⌫" && key != "C" { weight.append(key) }
+        case "⌫":
+            weight = String(weight.dropLast())
+        case "C":
+            weight = ""
+        default:
+            if weight.count < 5 && key != "⌫" && key != "C" {
+                weight.append(key)
+            }
         }
     }
 }
 
-struct BodyWeight_Previews: PreviewProvider {
+struct BodyWeightView1_Previews: PreviewProvider {
     static var previews: some View {
         BodyWeightView1()
     }
