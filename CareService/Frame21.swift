@@ -10,80 +10,124 @@
 import SwiftUI
 
 struct Frame21View: View {
-    @State private var sugarLevel: String = ""
-    @State private var path = NavigationPath()
+    @State private var enteredValue: String = ""
+    @State private var navigateToNextScreen = false
+    @State private var sugarLevel = ""
 
     var body: some View {
-        NavigationStack(path: $path) {
+        NavigationStack {
             GeometryReader { geometry in
                 ZStack {
-                    Color("background")
-                        .ignoresSafeArea()
+                    Color("background").ignoresSafeArea()
 
-                    VStack(spacing: 40) {
+                    VStack(spacing: 20) {
                         titleSection
                         inputSection
                         keypadSection
-                        nextButton
+
+                        Button("Next") {
+                            sugarLevel = enteredValue
+                            navigateToNextScreen = true
+                        }
+                        .foregroundColor(.white)
+                        .frame(width: min(geometry.size.width * 0.4, 150), height: 44)
+                        .background(Color.blue)
+                        .cornerRadius(8)
+                        .padding(.top, 20)
+
+                        NavigationLink(destination: Frame22View(bloodSugarLevel: $sugarLevel), isActive: $navigateToNextScreen) {
+                            EmptyView()
+                        }
+                        .hidden()
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding()
-                    .frame(maxWidth: 600)
-                    .frame(width: geometry.size.width * 0.6)
-                    .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                 }
-            }
-            .navigationDestination(for: String.self) { _ in
-                Frame22View(bloodSugarLevel: $sugarLevel)
             }
         }
     }
 
     private var titleSection: some View {
-        VStack(spacing: 12) {
-            Text("Diary")
+        VStack(spacing: 8) {
+            Text("List of symptoms")
                 .font(.largeTitle)
                 .bold()
-
-            Text("Blood Sugar Level")
+            Text("Blood sugar level")
                 .font(.headline)
-
-            Text("Please enter your or the care receiver's blood sugar level")
+            Text("Please enter your or your care receiver's blood sugar level")
                 .font(.subheadline)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 30)
         }
+        .padding(.top, 20)
     }
 
     private var inputSection: some View {
-        TextField("Enter sugar level", text: $sugarLevel)
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .keyboardType(.decimalPad)
-            .padding(.horizontal)
+        VStack(spacing: 12) {
+            Text(enteredValue)
+                .font(.title2)
+                .padding()
+                .frame(width: 200)
+                .background(Color.white)
+                .cornerRadius(8)
+                .shadow(radius: 2)
+        }
     }
 
     private var keypadSection: some View {
-        Text("Custom Keypad Here")
-            .foregroundColor(.gray)
+        VStack(spacing: 10) {
+            keypadRow(keys: ["1", "2", "3"])
+            keypadRow(keys: ["4", "5", "6"])
+            keypadRow(keys: ["7", "8", "9"])
+            keypadRow(keys: ["C", "0", "⌫"])
+        }
     }
 
-    private var nextButton: some View {
-        Button(action: {
-            path.append("next")
-        }) {
-            Text("Next")
-                .frame(maxWidth: .infinity, minHeight: 50)
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .cornerRadius(10)
-                .font(.headline)
+    private func keypadRow(keys: [String]) -> some View {
+        HStack(spacing: 10) {
+            ForEach(keys, id: \.self) { key in
+                NumberPadButton(key: key) {
+                    handleKeyPress(key)
+                }
+            }
         }
-        .padding(.horizontal)
-        .padding(.top, 10)
+    }
+
+    private func handleKeyPress(_ key: String) {
+        switch key {
+        case "⌫":
+            if !enteredValue.isEmpty {
+                enteredValue.removeLast()
+            }
+        case "C":
+            enteredValue = ""
+        default:
+            if enteredValue.count < 5 {
+                enteredValue.append(key)
+            }
+        }
+    }
+}
+
+struct NumberPadButton: View {
+    let key: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(key)
+                .frame(width: 60, height: 60)
+                .background(Color.white)
+                .foregroundColor(.blue)
+                .cornerRadius(8)
+                .font(.title)
+        }
     }
 }
 
 struct Frame21View_Previews: PreviewProvider {
     static var previews: some View {
         Frame21View()
+            .previewDevice("iPad Pro (13-inch)")
     }
 }
