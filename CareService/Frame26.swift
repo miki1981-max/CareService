@@ -13,51 +13,64 @@ struct Frame26View: View {
 
     var body: some View {
         NavigationStack {
-            VStack {
-                Text("Library")
-                    .font(.title)
-                    .bold()
-                    .padding(.top, 100)
+            GeometryReader { geometry in
+                ZStack {
+                    Color("background")
+                        .ignoresSafeArea()
 
-                Text("Here you can find links to helpful articles on caring for elderly or sick persons.")
-                    .font(.body)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 50)
+                    ScrollView {
+                        VStack(spacing: 32) {
+                            // Заголовок
+                            Text("Library")
+                                .font(.largeTitle.bold())
+                                .padding(.top, 60)
 
-                Spacer(minLength: 50)
+                            // Подзаголовок
+                            Text("Here you can find links to helpful articles on caring for elderly or sick persons.")
+                                .font(.body)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal)
+                                .frame(maxWidth: 600)
 
-                NavigationLink(
-                    destination: LinksListView3(category: "Nutrition", links: nutritionLinks),
-                    tag: "Nutrition",
-                    selection: $selectedCategory
-                ) {
-                    Button("Nutrition") {
-                        selectedCategory = "Nutrition"
+                            // Кнопки
+                            VStack(spacing: 20) {
+                                NavigationLink(
+                                    destination: LinksListView3(category: "Nutrition", links: nutritionLinks),
+                                    tag: "Nutrition",
+                                    selection: $selectedCategory
+                                ) {
+                                    Button("Nutrition") {
+                                        selectedCategory = "Nutrition"
+                                    }
+                                    .buttonStyle(Frame26ButtonStyle())
+                                }
+
+                                NavigationLink(
+                                    destination: LinksListView3(category: "Benefits of Walking", links: benefitsofwalkingLinks),
+                                    tag: "Benefits of Walking",
+                                    selection: $selectedCategory
+                                ) {
+                                    Button("Benefits of Walking") {
+                                        selectedCategory = "Benefits of Walking"
+                                    }
+                                    .buttonStyle(Frame26ButtonStyle())
+                                }
+                            }
+
+                            Spacer()
+                        }
+                        .padding(.horizontal)
+                        .frame(minHeight: geometry.size.height)
+                        .frame(maxWidth: 600)
+                        .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(Frame26ButtonStyle())
                 }
-
-                NavigationLink(
-                    destination: LinksListView3(category: "Benefits of Walking", links: benefitsofwalkingLinks),
-                    tag: "Benefits of Walking",
-                    selection: $selectedCategory
-                ) {
-                    Button("Benefits of Walking") {
-                        selectedCategory = "Benefits of Walking"
-                    }
-                    .buttonStyle(Frame26ButtonStyle())
-                }
-
-                Spacer()
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color("Background"))
-            .ignoresSafeArea()
         }
     }
 
-    
+    // MARK: - Ссылки
+
     private var nutritionLinks: [String] {
         [
             "https://www.nia.nih.gov/health/healthy-eating-nutrition-and-diet/healthy-meal-planning-tips-older-adults",
@@ -65,7 +78,6 @@ struct Frame26View: View {
         ]
     }
 
-    
     private var benefitsofwalkingLinks: [String] {
         [
             "https://www.nia.nih.gov/health/exercise-and-physical-activity/real-life-benefits-exercise-and-physical-activity",
@@ -74,22 +86,29 @@ struct Frame26View: View {
     }
 }
 
+// MARK: - Стилизация кнопок
+
 struct Frame26ButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .foregroundColor(.white)
+            .font(.headline)
             .padding()
             .frame(height: 50)
             .frame(maxWidth: .infinity)
             .background(Color.blue)
-            .cornerRadius(10)
+            .cornerRadius(12)
             .padding(.horizontal, 20)
-            .scaleEffect(configuration.isPressed ? 0.95 : 1)
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
+            .animation(.easeOut(duration: 0.2), value: configuration.isPressed)
     }
 }
+
+// MARK: - Превью
 
 struct Frame26View_Previews: PreviewProvider {
     static var previews: some View {
         Frame26View()
+            .previewDevice("iPad Pro (13-inch)")
     }
 }

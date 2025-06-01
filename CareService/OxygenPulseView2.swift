@@ -12,98 +12,133 @@ import SwiftUI
 struct OxygenPulseView2: View {
     var oxygen: String
     var value2: String
-    var pulse: String   // Pass these from previous frame
+    var pulse: String
+
     @State private var showConfirmation = false
-    @State var OxygenPulseResult = ""
-    @State private var currentTime: String = "" // To hold real-time
-    @State private var notice: String = "" // Notice input
+    @State private var oxygenPulseResult = ""
+    @State private var currentTime: String = ""
+    @State private var notice: String = ""
+    @Environment(\.horizontalSizeClass) var sizeClass
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text("List of symptoms")
+        NavigationStack {
+            ZStack {
+                Color("background").ignoresSafeArea()
+
+                ScrollView {
+                    VStack(alignment: .center, spacing: 30) {
+                        headerSection
+                        resultSection
+                        timestampSection
+                        noticeField
+                        saveButton
+                        navigationButton
+                    }
+                    .padding()
+                    .frame(maxWidth: 700)
+                    .onAppear {
+                        updateCurrentTime()
+                        oxygenPulseResult = "\(oxygen) / \(value2) / \(pulse)"
+                    }
+                }
+            }
+            .navigationTitle("Oxygen & Pulse")
+            .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+
+    private var headerSection: some View {
+        VStack(spacing: 8) {
+            Text("List of Symptoms")
                 .font(.largeTitle)
-                .bold()
-                .padding(.top, 50)
+                .fontWeight(.bold)
 
             Text("Oxygen and pulse is...")
                 .font(.title3)
-                .padding(.bottom, 10)
-                .onAppear() {
-                    OxygenPulseResult = "\(oxygen) / \(value2) / \(pulse)"
-                }
+                .foregroundColor(.secondary)
+        }
+    }
 
-            //Text(oxygen + "/" + value2 + "/" + pulse)
-            Text(OxygenPulseResult)
-                .font(.largeTitle)
-                .bold()
+    private var resultSection: some View {
+        Text(oxygenPulseResult)
+            .font(.system(size: 34, weight: .bold, design: .rounded))
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(Color.white)
+            .cornerRadius(16)
+            .shadow(radius: 4)
+    }
 
-            HStack(spacing: 10) {
-                Text(currentTime)
-                    .font(.headline)
-                    .padding()
-                    .frame(minWidth: 100, idealWidth: 150, maxWidth: 200, maxHeight: 40)
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(8)
-
-                Button("TODAY") {
-                    // "Today" button action
-                }
-                .frame(minWidth: 100, idealWidth: 150, maxWidth: 200, maxHeight: 40)
-                .background(Color.blue)
-                .foregroundColor(.white)
+    private var timestampSection: some View {
+        HStack(spacing: 16) {
+            Text(currentTime)
+                .font(.headline)
+                .padding()
+                .frame(width: 150)
+                .background(Color.gray.opacity(0.2))
                 .cornerRadius(8)
-            }
-            .padding(.vertical, 10)
 
-            TextField("Enter notice", text: $notice)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .frame(width: 250)
-
-            Button("Save") {
-                saveInformation()
-                showConfirmation = true
+            Button("Today") {
+                updateCurrentTime()
             }
-            .alert(isPresented: $showConfirmation) {
-                Alert(title: Text("Saved"), message: Text("Your information has been saved."), dismissButton: .default(Text("OK")))
-            }
-            .foregroundColor(.white)
             .frame(width: 150, height: 44)
             .background(Color.blue)
+            .foregroundColor(.white)
             .cornerRadius(8)
-            .padding(.top, 20)
+        }
+    }
 
-            NavigationLink(destination: Frame23View()) {
-                Text("Next")
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity, maxHeight: 44)
-                    .background(Color.green)
-                    .cornerRadius(8)
-            }
-            .padding(.bottom, 20)
+    private var noticeField: some View {
+        TextField("Enter notice", text: $notice)
+            .textFieldStyle(.roundedBorder)
+            .padding(.horizontal, 20)
+            .frame(maxWidth: 400)
+    }
+
+    private var saveButton: some View {
+        Button("Save") {
+            saveInformation()
+            showConfirmation = true
         }
-        .padding(.horizontal, 20)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color("Background"))
-        .ignoresSafeArea()
-        .onAppear {
-            updateCurrentTime()
+        .alert(isPresented: $showConfirmation) {
+            Alert(title: Text("Saved"), message: Text("Your information has been saved."), dismissButton: .default(Text("OK")))
         }
+        .foregroundColor(.white)
+        .frame(width: 200, height: 50)
+        .background(Color.accentColor)
+        .cornerRadius(10)
+        .shadow(radius: 3)
+    }
+
+    private var navigationButton: some View {
+        NavigationLink(destination: Frame23View()) {
+            Text("Next")
+                .font(.headline)
+                .foregroundColor(.white)
+                .frame(width: 200, height: 50)
+                .background(Color.green)
+                .cornerRadius(10)
+                .shadow(radius: 3)
+        }
+        .padding(.top, 20)
     }
 
     private func updateCurrentTime() {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HH:mm"
-        currentTime = dateFormatter.string(from: Date())
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        currentTime = formatter.string(from: Date())
     }
-    
+
     private func saveInformation() {
-        UserDefaults.standard.set(OxygenPulseResult, forKey: "savedWeight")
+        UserDefaults.standard.set(oxygenPulseResult, forKey: "savedWeight")
         UserDefaults.standard.set(notice, forKey: "savedNotice")
     }
 }
 
 struct OxygenPulseView2_Previews: PreviewProvider {
     static var previews: some View {
-        OxygenPulseView2(oxygen: "95", value2: "78", pulse: "80") // Pass example value for preview
+        OxygenPulseView2(oxygen: "95", value2: "78", pulse: "80")
+            .previewDevice("iPad Pro (13-inch)")
+            .environment(\.colorScheme, .light)
     }
 }

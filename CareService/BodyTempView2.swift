@@ -16,6 +16,7 @@ struct Frame20View: View {
     @State private var showConfirmation = false
     @State private var currentTime: String = ""
     @State private var measurementPlace: String = "Armpit"
+    @State private var navigateToNextScreen = false
 
     var body: some View {
         GeometryReader { geometry in
@@ -98,14 +99,17 @@ struct Frame20View: View {
                     .cornerRadius(8)
                     .padding(.top, 20)
 
-                    NavigationLink(destination: Frame23View()) {
-                        Text("Next")
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity, maxHeight: 44)
-                            .background(Color.green)
-                            .cornerRadius(8)
+                    Button("Next") {
+                        navigateToNextScreen = true
                     }
+                    .foregroundColor(.white)
+                    .frame(width: 150, height: 44)
+                    .background(Color.green)
+                    .cornerRadius(8)
                     .padding(.bottom, 20)
+                    .navigationDestination(isPresented: $navigateToNextScreen) {
+                        Frame23View()
+                    }
                 }
                 .padding(.horizontal, 20)
                 .frame(width: geometry.size.width)

@@ -19,7 +19,7 @@ struct BloodPressureView1: View {
         NavigationStack {
             GeometryReader { geometry in
                 ZStack {
-                    Color("Background").ignoresSafeArea()
+                    Color("background").ignoresSafeArea()
 
                     VStack(spacing: 20) {
                         titleSection

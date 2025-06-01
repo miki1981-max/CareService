@@ -26,31 +26,35 @@ struct Frame23View: View {
     @State private var sugarLevel: Float = UserDefaults.standard.float(forKey: "savedBloodSugarLevel")
 
     var body: some View {
-        NavigationStack {
-            GeometryReader { geometry in
-                VStack {
+        GeometryReader { geometry in
+            ScrollView {
+                VStack(spacing: 24) {
                     HStack {
                         Text(currentTime)
                             .font(.headline)
                             .padding()
-                            .frame(maxWidth: 100, maxHeight: 40)
-                            .background(Color.gray.opacity(0.2))
-                            .cornerRadius(8)
+                            .frame(width: 120, height: 44)
+                            .background(Color.white)
+                            .cornerRadius(12)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                            )
 
                         Spacer()
 
                         Button("TODAY") {
-                            currentTime = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
+                            updateCurrentTime()
                         }
-                        .frame(maxWidth: 100, maxHeight: 40)
-                        .background(Color.blue)
+                        .font(.headline)
                         .foregroundColor(.white)
-                        .cornerRadius(8)
+                        .frame(width: 120, height: 44)
+                        .background(Color.blue)
+                        .cornerRadius(12)
                     }
-                    .padding(.top, 20)
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal)
 
-                    VStack(spacing: 10) {
+                    VStack(spacing: 12) {
                         entryField(label: "Name", value: patient)
                         entryField(label: "Gender", value: gender)
                         entryField(label: "Age", value: age)
@@ -58,45 +62,63 @@ struct Frame23View: View {
                         entryField(label: "Pressure", value: "\(pressure) mmHg")
                         entryField(label: "Oxygen", value: "\(oxygen)%")
                         entryField(label: "Pulse", value: "\(pulse) bpm")
-                        entryField(label: "Body temperature", value: "\(temperature)°C")
-                        entryField(label: "Sugar level", value: "\(sugarLevel) mmol/L")
+                        entryField(label: "Body Temperature", value: "\(temperature)°C")
+                        entryField(label: "Sugar Level", value: "\(sugarLevel) mmol/L")
                     }
                     .padding()
+                    .frame(maxWidth: 600)
+                    .background(Color.white)
+                    .cornerRadius(16)
+                    .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 4)
 
-                    NavigationLink(destination: Fillinginformation1()) {
-                        Text("Back to List of Symptoms")
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity, maxHeight: 44)
-                            .background(Color.green)
-                            .cornerRadius(8)
+                    VStack(spacing: 16) {
+                        NavigationLink(destination: Fillinginformation1()) {
+                            Text("Back to List of Symptoms")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(width: min(geometry.size.width * 0.5, 280), height: 50)
+                                .background(Color.green)
+                                .cornerRadius(12)
+                        }
+
+                        NavigationLink(destination: RecommendationsView1()) {
+                            Text("Back to Recommendations")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(width: min(geometry.size.width * 0.5, 280), height: 50)
+                                .background(Color.green)
+                                .cornerRadius(12)
+                        }
                     }
-                    .padding(.bottom, 20)
+                    .padding(.top, 20)
+                    .padding(.bottom, 40)
                 }
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .background(Color("background"))
-                .ignoresSafeArea()
+                .padding(.top, 40)
+                .padding(.horizontal)
             }
+            .background(Color("background"))
+            .ignoresSafeArea()
         }
+        .navigationTitle("Diary")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func updateCurrentTime() {
+        currentTime = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
     }
 
     @ViewBuilder
     private func entryField(label: String, value: String) -> some View {
         HStack {
-            Text(label + ":")
+            Text("\(label):")
                 .font(.headline)
             Spacer()
             Text(value)
                 .font(.subheadline)
+                .foregroundColor(.black)
         }
         .padding()
-        .frame(height: 40)
-        .background(Color.white)
-        .cornerRadius(10)
-    }
-}
-
-struct Frame23View_Previews: PreviewProvider {
-    static var previews: some View {
-        Frame23View()
+        .background(Color.gray.opacity(0.1))
+        .cornerRadius(12)
     }
 }

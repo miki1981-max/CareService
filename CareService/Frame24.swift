@@ -14,47 +14,50 @@ struct Frame24View: View {
 
     var body: some View {
         NavigationStack {
-            VStack {
-                Text("Library")
-                    .font(.title)
-                    .bold()
-                    .padding(.top, 100)
+            GeometryReader { geometry in
+                VStack(spacing: 30) {
+                    Spacer(minLength: 60)
 
-                Text("Here you can find links to helpful articles on caring for elderly or sick persons.")
-                    .font(.body)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 50)
+                    Text("Library")
+                        .font(.system(size: 40, weight: .bold))
+                        .padding(.top, 20)
 
-                Spacer(minLength: 50)
+                    Text("Here you can find links to helpful articles on caring for elderly or sick persons.")
+                        .font(.body)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 40)
 
-                NavigationLink(
-                    destination: LinksListView(category: "Comfort and Safety", links: comfortAndSafetyLinks),
-                    tag: "Comfort and Safety",
-                    selection: $selectedCategory
-                ) {
-                    Button("Comfort and Safety") {
-                        selectedCategory = "Comfort and Safety"
+                    VStack(spacing: 20) {
+                        NavigationLink(
+                            destination: LinksListView(category: "Comfort and Safety", links: comfortAndSafetyLinks),
+                            tag: "Comfort and Safety",
+                            selection: $selectedCategory
+                        ) {
+                            Button("Comfort and Safety") {
+                                selectedCategory = "Comfort and Safety"
+                            }
+                            .buttonStyle(Frame24ButtonStyle())
+                        }
+
+                        NavigationLink(
+                            destination: LinksListView(category: "Hygiene", links: hygieneLinks),
+                            tag: "Hygiene",
+                            selection: $selectedCategory
+                        ) {
+                            Button("Hygiene") {
+                                selectedCategory = "Hygiene"
+                            }
+                            .buttonStyle(Frame24ButtonStyle())
+                        }
                     }
-                    .buttonStyle(Frame24ButtonStyle())
-                }
+                    .frame(maxWidth: min(geometry.size.width * 0.8, 500))
 
-                NavigationLink(
-                    destination: LinksListView(category: "Hygiene", links: hygieneLinks),
-                    tag: "Hygiene",
-                    selection: $selectedCategory
-                ) {
-                    Button("Hygiene") {
-                        selectedCategory = "Hygiene"
-                    }
-                    .buttonStyle(Frame24ButtonStyle())
+                    Spacer()
                 }
-
-                Spacer()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color("background"))
+                .ignoresSafeArea()
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color("Background"))
-            .ignoresSafeArea()
         }
     }
 
@@ -76,19 +79,22 @@ struct Frame24View: View {
 struct Frame24ButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .font(.headline)
             .foregroundColor(.white)
             .padding()
             .frame(height: 50)
             .frame(maxWidth: .infinity)
             .background(Color.blue)
-            .cornerRadius(10)
-            .padding(.horizontal, 20)
-            .scaleEffect(configuration.isPressed ? 0.95 : 1)
+            .cornerRadius(12)
+            .padding(.horizontal)
+            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
+            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
     }
 }
 
 struct Frame24View_Previews: PreviewProvider {
     static var previews: some View {
         Frame24View()
+            .previewDevice("iPad Pro (13-inch)")
     }
 }

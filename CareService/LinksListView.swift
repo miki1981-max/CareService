@@ -14,66 +14,83 @@ struct LinksListView: View {
     var links: [String]
 
     var body: some View {
-        VStack(spacing: 30) {
-            
-            Text(category)
-                .font(.largeTitle)
-                .bold()
-                .foregroundColor(.white)
-                .multilineTextAlignment(.center)
-                .padding(.top, 120)
+        NavigationStack {
+            GeometryReader { geometry in
+                ZStack {
+                    Color("background")
+                        .ignoresSafeArea()
 
-            Text("Here are some helpful articles:")
-                .font(.headline)
-                .foregroundColor(.white)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 30)
+                    ScrollView {
+                        VStack(spacing: 32) {
+                            Text(category)
+                                .font(.largeTitle.bold())
+                                .multilineTextAlignment(.center)
+                                .padding(.top, 60)
 
-            ScrollView {
-                VStack(spacing: 20) {
-                    ForEach(links, id: \.self) { link in
-                        Button(action: {
-                            openURL(link)
-                        }) {
-                            HStack {
-                                Text(link)
-                                    .foregroundColor(.blue)
-                                    .underline()
-                                    .lineLimit(1)
-                                    .truncationMode(.middle)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            Text("Here are some helpful articles:")
+                                .font(.title3)
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(.secondary)
+                                .padding(.horizontal)
+                                .frame(maxWidth: 600)
 
-                                Image(systemName: "arrow.up.right.circle.fill")
-                                    .foregroundColor(.blue)
-                                    .font(.title2)
+                            VStack(spacing: 20) {
+                                ForEach(links, id: \.self) { link in
+                                    LinkCardView(link: link)
+                                }
                             }
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.white)
-                            .cornerRadius(10)
-                            .shadow(radius: 5)
+                            .padding(.horizontal)
+                            .frame(maxWidth: 600)
+
+                            Spacer(minLength: 60)
                         }
-                        .padding(.horizontal, 20)
+                        .frame(minHeight: geometry.size.height)
+                        .frame(maxWidth: .infinity)
                     }
                 }
             }
-            .padding(.top, 20)
-
-            Spacer()
         }
-        .padding(.horizontal, 20)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color("Background"))
-        .ignoresSafeArea()
+    }
+}
+
+struct LinkCardView: View {
+    let link: String
+
+    var body: some View {
+        Button(action: {
+            openURL(link)
+        }) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(link)
+                        .font(.body)
+                        .foregroundColor(.blue)
+                        .underline()
+                        .lineLimit(2)
+                        .truncationMode(.middle)
+                }
+
+                Spacer()
+
+                Image(systemName: "arrow.up.right.circle.fill")
+                    .foregroundColor(.blue)
+                    .font(.title2)
+            }
+            .padding()
+            .background(Color.white)
+            .cornerRadius(12)
+            .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+        }
     }
 
-    // Open the URL in the device's browser
     private func openURL(_ urlString: String) {
         if let url = URL(string: urlString) {
             UIApplication.shared.open(url)
         }
     }
 }
+
+// MARK: - Preview
 
 struct LinksListView_Previews: PreviewProvider {
     static var previews: some View {
@@ -84,5 +101,6 @@ struct LinksListView_Previews: PreviewProvider {
                 "https://www.healthline.com/health/safe-living-for-elderly"
             ]
         )
+        .previewDevice("iPad Pro (13-inch)")
     }
 }

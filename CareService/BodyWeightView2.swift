@@ -77,10 +77,10 @@ struct BodyWeightView2: View {
                             navigateToNextScreen = true
                         }
                         .foregroundColor(.white)
-                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .frame(width: geometry.size.width * 0.4, height: 44)
                         .background(Color.green)
                         .cornerRadius(8)
-                        .padding(.horizontal)
+                        .padding(.top, 10)
                         .navigationDestination(isPresented: $navigateToNextScreen) {
                             Frame23View()
                         }

@@ -20,7 +20,7 @@ struct BodyWeightView1: View {
                 ZStack {
                     Color("background").ignoresSafeArea()
 
-                    VStack {
+                    VStack(spacing: 20) {
                         titleSection
                         inputSection
                         keypadSection
@@ -33,6 +33,7 @@ struct BodyWeightView1: View {
                         .background(Color.blue)
                         .cornerRadius(8)
                         .padding(.top, 20)
+
                         .navigationDestination(isPresented: $navigateToNextScreen) {
                             BodyWeightView2(bodyweight: weight)
                         }
@@ -45,9 +46,12 @@ struct BodyWeightView1: View {
     }
 
     private var titleSection: some View {
-        VStack {
-            Text("List of symptoms").font(.largeTitle).bold()
-            Text("Body Weight").font(.headline)
+        VStack(spacing: 8) {
+            Text("List of symptoms")
+                .font(.largeTitle)
+                .bold()
+            Text("Body Weight")
+                .font(.headline)
             Text("Please enter your or the care receiver's body weight")
                 .font(.subheadline)
                 .multilineTextAlignment(.center)
@@ -57,12 +61,16 @@ struct BodyWeightView1: View {
     }
 
     private var inputSection: some View {
-        VStack {
-            TextField("Enter the weight", text: $weight)
-                .keyboardType(.decimalPad)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .frame(width: 150)
-            Text("lbs/kg").font(.headline)
+        VStack(spacing: 12) {
+            Text("Weight: \(weight)")
+                .font(.title2)
+                .padding()
+                .frame(width: 200)
+                .background(Color.white)
+                .cornerRadius(8)
+                .shadow(radius: 2)
+            Text("lbs / kg")
+                .font(.headline)
         }
         .padding(.top, 20)
     }
@@ -79,7 +87,7 @@ struct BodyWeightView1: View {
     private func keypadRow(keys: [String]) -> some View {
         HStack(spacing: 10) {
             ForEach(keys, id: \.self) { key in
-                KeyButton(key: key) {
+                BodyWeightKeyButton(key: key) {
                     handleKeyPress(key)
                 }
             }
@@ -89,13 +97,31 @@ struct BodyWeightView1: View {
     private func handleKeyPress(_ key: String) {
         switch key {
         case "⌫":
-            weight = String(weight.dropLast())
+            if !weight.isEmpty {
+                weight.removeLast()
+            }
         case "C":
             weight = ""
         default:
-            if weight.count < 5 && key != "⌫" && key != "C" {
+            if weight.count < 5 {
                 weight.append(key)
             }
+        }
+    }
+}
+
+struct BodyWeightKeyButton: View {
+    let key: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(key)
+                .frame(width: 60, height: 60)
+                .background(Color.white)
+                .foregroundColor(.blue)
+                .cornerRadius(8)
+                .font(.title)
         }
     }
 }
@@ -103,5 +129,6 @@ struct BodyWeightView1: View {
 struct BodyWeightView1_Previews: PreviewProvider {
     static var previews: some View {
         BodyWeightView1()
+            .previewDevice("iPad Pro (13-inch)")
     }
 }

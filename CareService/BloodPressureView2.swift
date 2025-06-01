@@ -89,19 +89,20 @@ struct BloodPressureView2: View {
                     .background(Color.blue)
                     .cornerRadius(8)
 
-                    NavigationLink(destination: Frame23View(), isActive: $navigateToNextScreen) {
-                        Button("Next") {
-                            navigateToNextScreen = true
-                        }
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity, maxHeight: 44)
-                        .background(Color.green)
-                        .cornerRadius(8)
+                    Button("Next") {
+                        navigateToNextScreen = true
+                    }
+                    .foregroundColor(.white)
+                    .frame(width: geometry.size.width * 0.4, height: 44)
+                    .background(Color.green)
+                    .cornerRadius(8)
+                    .navigationDestination(isPresented: $navigateToNextScreen) {
+                        Frame23View()
                     }
                 }
                 .padding()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color("Background"))
+                .background(Color("background"))
                 .ignoresSafeArea()
             }
         }
