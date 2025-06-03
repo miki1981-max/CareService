@@ -5,8 +5,6 @@
 //  Created by Kamila Ponomarova on 2025-05-22.
 //
 
-
-
 import SwiftUI
 
 struct Frame21View: View {
@@ -35,7 +33,10 @@ struct Frame21View: View {
                         .cornerRadius(8)
                         .padding(.top, 20)
 
-                        NavigationLink(destination: Frame22View(bloodSugarLevel: $sugarLevel), isActive: $navigateToNextScreen) {
+                        NavigationLink(
+                            destination: Frame22View(bloodSugarLevel: $sugarLevel),
+                            isActive: $navigateToNextScreen
+                        ) {
                             EmptyView()
                         }
                         .hidden()

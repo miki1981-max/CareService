@@ -25,8 +25,6 @@ struct Frame22View: View {
 
                     ScrollView {
                         VStack(spacing: 24) {
-                           
-
                             VStack(spacing: 4) {
                                 Text("Your Blood Sugar level is")
                                     .font(.headline)
